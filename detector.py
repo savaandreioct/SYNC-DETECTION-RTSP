@@ -9,6 +9,7 @@ from typing import Any, List
 from structlog import get_logger
 import numpy as np
 from datetime import datetime
+from util import load_file_as_list
 
 
 class Detector:
@@ -16,18 +17,7 @@ class Detector:
         self.stream = stream
         self.models = models
         self.loaded_models = self.load_models()
-
-        # TODO load classes from file
-        # self.classes = classes
-        self.classes = self.loaded_models[0].names
-        #         txt_file = open("classes_new.txt", "r")
-        # file_content = txt_file.read()
-        # print("The file content are: ", file_content)
-
-        # content_list = file_content.split("\n")
-        # txt_file.close()
-        # print("The list is: ", content_list)
-
+        self.classes = load_file_as_list("classes.txt")
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print("Using Device: ", self.device)
 
