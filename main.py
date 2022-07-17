@@ -1,6 +1,12 @@
+"""
+Main module of the project
+"""
+
+
+from argparse import ArgumentParser
+
 from detector import Detector
 from stream import Stream
-from argparse import ArgumentParser
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Process script arguments")
