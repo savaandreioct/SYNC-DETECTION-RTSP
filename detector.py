@@ -2,6 +2,7 @@
 Detector module
 """
 
+from copy import deepcopy
 from datetime import datetime
 from threading import Thread
 from typing import Any, List
@@ -78,6 +79,7 @@ class Detector:
         """
         self.loaded_models[index].to(self.device)
         results = self.loaded_models[index]([frame])
+        # get_logger().info("Result info", info=results.print(), model=self.models[index])
         labels, cord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
         return labels, cord
 
@@ -88,6 +90,7 @@ class Detector:
         Takes a frame, its label and cord and plots the bounding boxes and label on to the frame.
         """
 
+        temp_frame = deepcopy(frame)
         x_shape, y_shape = frame.shape[1], frame.shape[0]
         for i in range(len(labels)):
             row = cord[i]
@@ -99,9 +102,9 @@ class Detector:
                     int(row[3] * y_shape),
                 )
                 bgr = (0, 255, 0)
-                cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
+                cv2.rectangle(temp_frame, (x1, y1), (x2, y2), bgr, 2)
                 cv2.putText(
-                    frame,
+                    temp_frame,
                     self.class_to_label(labels[i]),
                     (x1, y1),
                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -110,7 +113,7 @@ class Detector:
                     2,
                 )
 
-        return frame
+        return temp_frame
 
     def predict(self, frame: np.ndarray, index: int, frame_dict: dict) -> None:
         """
@@ -119,8 +122,7 @@ class Detector:
         """
 
         labels, cord = self.detect(frame, index)
-        frame = self.plot_results(frame, labels, cord)
-        frame_dict.update({self.models[index]: frame})
+        frame_dict.update({self.models[index]: self.plot_results(frame, labels, cord)})
 
     def __call__(self) -> None:
         """
@@ -157,6 +159,7 @@ class Detector:
                     datetime=datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
                 )
                 cv2.imshow(f"YOLOv5 Detection {name}", frame_dict.get(name))
+                cv2.resizeWindow(f"YOLOv5 Detection {name}", 640, 640)
 
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 get_logger().info("Bye-Bye")
