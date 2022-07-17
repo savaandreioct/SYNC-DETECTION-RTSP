@@ -1,9 +1,15 @@
+"""
+Stream module containing Stream class
+"""
+
+
 import sys
 from time import sleep
 from typing import Union
+
 import cv2
-from structlog import get_logger
 import numpy as np
+from structlog import get_logger
 
 
 class Stream:
@@ -12,7 +18,7 @@ class Stream:
 
     def get(self) -> Union[cv2.VideoCapture, None]:
         """
-        Get Video Stream
+        Get Video Stream.
         """
         video = None
         try:
@@ -29,6 +35,10 @@ class Stream:
     def check_stream(
         stream: cv2.VideoCapture, retry: int = 3, timeout: float = 5
     ) -> bool:
+        """
+        Check if stream is oppened and retry if not.
+        """
+
         if retry < 1:
             retry = 3
             get_logger().warning(
@@ -68,7 +78,7 @@ class Stream:
     @staticmethod
     def read(stream: cv2.VideoCapture) -> np.ndarray:
         """
-        Reading frames from Video
+        Reading frames from Video.
         """
 
         ret, frame = stream.read()
@@ -83,6 +93,6 @@ class Stream:
     @staticmethod
     def stop(stream: cv2.VideoCapture) -> None:
         """
-        Stop Video Stream
+        Stop Video Stream.
         """
         stream.release()
