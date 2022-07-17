@@ -1,25 +1,28 @@
-from random import random
-import torch
-import cv2
-from threading import Thread
-import time
-import sys
-from stream import Stream
-from typing import Any, List
-from structlog import get_logger
-import numpy as np
+"""
+Detector module
+"""
+
 from datetime import datetime
+from threading import Thread
+from typing import Any, List
+
+import cv2
+import numpy as np
+import torch
+from structlog import get_logger
+
+from stream import Stream
 from util import load_file_as_list
 
 
 class Detector:
-    def __init__(self, stream: Stream, models: List[str]):
+    def __init__(self, stream: Stream, models: List[str]) -> None:
         self.stream = stream
         self.models = models
         self.loaded_models = self.load_models()
         self.classes = load_file_as_list("classes.txt")
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print("Using Device: ", self.device)
+        get_logger.info("Device Info", device=self.device)
 
     def _load_model(self, model_name: str) -> Any:
         """
