@@ -22,7 +22,7 @@ class Detector:
         self.loaded_models = self.load_models()
         self.classes = load_file_as_list("classes.txt")
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        get_logger.info("Device Info", device=self.device)
+        get_logger().info("Device Info", device=self.device)
 
     def _load_model(self, model_name: str) -> Any:
         """
